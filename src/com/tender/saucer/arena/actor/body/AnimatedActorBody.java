@@ -12,13 +12,16 @@ import com.tender.saucer.arena.update.ITransientUpdate;
 
 public abstract class AnimatedActorBody extends ActorBody implements ITransientUpdate
 {
-	public static final int PLAYING = 0;
-	public static final int PAUSED = 1;
-	public static final int STOPPED = 2;
+	public enum AnimationState
+	{
+		PLAYING,
+		PAUSED,
+		STOPPED
+	}
 	
 	protected Animation animation;
 	protected float stateTime = 0;
-	protected int state = STOPPED;
+	protected AnimationState state = AnimationState.STOPPED;
 	
 	public AnimatedActorBody(Level level)
 	{
@@ -48,7 +51,7 @@ public abstract class AnimatedActorBody extends ActorBody implements ITransientU
 	@Override
 	public boolean update()
 	{
-		if(state == PLAYING)
+		if(state == AnimationState.PLAYING)
 		{
 			stateTime += Gdx.graphics.getDeltaTime();
 		}
@@ -58,17 +61,17 @@ public abstract class AnimatedActorBody extends ActorBody implements ITransientU
 	
 	public void pauseAnimation()
 	{
-		state = PAUSED;
+		state = AnimationState.PAUSED;
 	}
 	
 	public void startAnimation()
 	{
-		state = PLAYING;
+		state = AnimationState.PLAYING;
 	}
 	
 	public void stopAnimation()
 	{
-		state = STOPPED;
+		state = AnimationState.STOPPED;
 		stateTime = 0;
 	}
 	
@@ -78,7 +81,7 @@ public abstract class AnimatedActorBody extends ActorBody implements ITransientU
 		return animation.getKeyFrame(stateTime, true);
 	}
 	
-	public int getState()
+	public AnimationState getState()
 	{
 		return state;
 	}

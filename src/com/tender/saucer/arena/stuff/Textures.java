@@ -1,6 +1,6 @@
 package com.tender.saucer.arena.stuff;
 
-public class Textures
+public final class Textures
 {
 	private Textures()
 	{		

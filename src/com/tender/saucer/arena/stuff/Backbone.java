@@ -2,11 +2,11 @@ package com.tender.saucer.arena.stuff;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
-public class Backbone
+public final class Backbone
 {
-	public static int WIDTH = 800;
-	public static int HEIGHT = 480;
-	public static OrthographicCamera camera = new OrthographicCamera();	
+	public static final int WIDTH = 800;
+	public static final int HEIGHT = 480;
+	public static final OrthographicCamera CAMERA = new OrthographicCamera();	
 
 	private Backbone()
 	{
@@ -14,6 +14,6 @@ public class Backbone
 
 	public static void init()
 	{
-		camera.setToOrtho(false, WIDTH, HEIGHT);
+		CAMERA.setToOrtho(false, WIDTH, HEIGHT);
 	}
 }
