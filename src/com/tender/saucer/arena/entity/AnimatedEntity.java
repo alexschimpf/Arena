@@ -1,16 +1,14 @@
-package com.tender.saucer.arena.actor.body;
+package com.tender.saucer.arena.entity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.TimeUtils;
 import com.tender.saucer.arena.level.Level;
-import com.tender.saucer.arena.update.ITransientUpdate;
 
-public abstract class AnimatedActorBody extends ActorBody implements ITransientUpdate
+public abstract class AnimatedEntity extends Entity
 {
 	public enum AnimationState
 	{
@@ -23,12 +21,12 @@ public abstract class AnimatedActorBody extends ActorBody implements ITransientU
 	protected float stateTime = 0;
 	protected AnimationState state = AnimationState.STOPPED;
 	
-	public AnimatedActorBody(Level level)
+	public AnimatedEntity(Level level)
 	{
 		super(level);
 	}
 
-	public AnimatedActorBody(Level level, String sheetFilename, int numRows, int numCols, float frameDuration)
+	public AnimatedEntity(Level level, String sheetFilename, int numRows, int numCols, float frameDuration)
 	{
 		super(level);
 		
@@ -46,6 +44,7 @@ public abstract class AnimatedActorBody extends ActorBody implements ITransientU
         }
         
         animation = new Animation(frameDuration, frames);
+        animation.setPlayMode(PlayMode.LOOP);
 	}
 	
 	@Override
@@ -76,9 +75,10 @@ public abstract class AnimatedActorBody extends ActorBody implements ITransientU
 	}
 	
 	@Override 
-	public TextureRegion getTextureRegion()
+	public Sprite getSprite()
 	{
-		return animation.getKeyFrame(stateTime, true);
+		sprite.setRegion(animation.getKeyFrame(stateTime, true));
+		return sprite;
 	}
 	
 	public AnimationState getState()

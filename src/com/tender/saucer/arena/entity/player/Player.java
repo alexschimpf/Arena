@@ -1,10 +1,10 @@
-package com.tender.saucer.arena.actor.body.player;
+package com.tender.saucer.arena.entity.player;
 
-import com.tender.saucer.arena.actor.body.AnimatedActorBody;
+import com.tender.saucer.arena.entity.AnimatedEntity;
 import com.tender.saucer.arena.level.Level;
-import com.tender.saucer.arena.update.ITransientUpdate;
+import com.tender.saucer.arena.update.IUpdate;
 
-public abstract class Player extends AnimatedActorBody
+public abstract class Player extends AnimatedEntity
 {	
 	public static final int BASE_HEALTH = 10;
 	public static final int BASE_DAMAGE = 1;

@@ -1,6 +1,6 @@
 package com.tender.saucer.arena.update;
 
-public interface ITransientUpdate
+public interface IUpdate
 {
 	public boolean update();
 	

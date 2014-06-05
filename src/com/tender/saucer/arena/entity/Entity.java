@@ -1,5 +1,6 @@
-package com.tender.saucer.arena.actor.body;
+package com.tender.saucer.arena.entity;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
@@ -7,14 +8,15 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Disposable;
 import com.tender.saucer.arena.collision.ICollide;
 import com.tender.saucer.arena.level.Level;
+import com.tender.saucer.arena.update.IUpdate;
 
-public abstract class ActorBody extends Actor implements Disposable, ICollide
+public abstract class Entity implements Disposable, ICollide, IUpdate
 {
-	protected TextureRegion region;
+	protected Sprite sprite;
 	protected Body body;
 	protected World world;
 
-	public ActorBody(Level level)
+	public Entity(Level level)
 	{
 		world = level.getWorld();
 	}
@@ -25,9 +27,9 @@ public abstract class ActorBody extends Actor implements Disposable, ICollide
 		world.destroyBody(body);
 	}
 	
-	public TextureRegion getTextureRegion()
+	public Sprite getSprite()
 	{
-		return region;
+		return sprite;
 	}
 
 	public Body getBody()

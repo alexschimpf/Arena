@@ -5,8 +5,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.tender.saucer.arena.actor.body.platform.Platform;
 import com.tender.saucer.arena.collision.CollisionListener;
+import com.tender.saucer.arena.entity.platform.Platform;
 import com.tender.saucer.arena.stuff.Backbone;
 
 public class Level
