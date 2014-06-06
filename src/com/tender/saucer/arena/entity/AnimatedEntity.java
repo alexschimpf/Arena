@@ -50,6 +50,8 @@ public abstract class AnimatedEntity extends Entity
 	@Override
 	public boolean update()
 	{
+		super.update();
+		
 		if(state == AnimationState.PLAYING)
 		{
 			stateTime += Gdx.graphics.getDeltaTime();

@@ -1,9 +1,12 @@
 package com.tender.saucer.arena;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.tender.saucer.arena.entity.Entity;
 import com.tender.saucer.arena.input.InputListener;
 import com.tender.saucer.arena.level.Environment;
 import com.tender.saucer.arena.stuff.Backbone;
@@ -32,8 +35,18 @@ public class Main extends Game
 		Backbone.CAMERA.update();
 		batch.setProjectionMatrix(Backbone.CAMERA.combined);
 		
+		Backbone.level.update();
+		
 		batch.begin();
-			// batch.draw(...)
+		{
+			Iterator<Entity> it = Backbone.ENTITIES.iterator();
+			while(it.hasNext())
+			{
+				Entity entity = it.next();
+				entity.update();
+				entity.draw(batch);
+			}
+		}
 		batch.end();
 	}
 	

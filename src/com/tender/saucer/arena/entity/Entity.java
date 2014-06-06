@@ -1,6 +1,7 @@
 package com.tender.saucer.arena.entity;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
@@ -25,6 +26,24 @@ public abstract class Entity implements Disposable, ICollide, IUpdate
 	public void dispose()
 	{
 		world.destroyBody(body);
+	}
+	
+	@Override
+	public boolean update()
+	{
+		
+		return false;
+	}
+	
+	@Override
+	public void onDone()
+	{
+		dispose();	
+	}
+	
+	public void draw(SpriteBatch batch)
+	{
+		sprite.draw(batch);
 	}
 	
 	public Sprite getSprite()

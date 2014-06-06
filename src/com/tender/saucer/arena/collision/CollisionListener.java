@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.tender.saucer.arena.entity.Entity;
 
 public class CollisionListener implements ContactListener
 {
@@ -16,8 +17,8 @@ public class CollisionListener implements ContactListener
 		Fixture fixB = contact.getFixtureB();
 		Body bodyA = fixA.getBody();
 		Body bodyB = fixB.getBody();
-		ICollide ownerA = (ICollide)bodyA.getUserData();
-		ICollide ownerB = (ICollide)bodyB.getUserData();
+		Entity ownerA = (Entity)bodyA.getUserData();
+		Entity ownerB = (Entity)bodyB.getUserData();
 		ownerA.collide(ownerB);
 		ownerB.collide(ownerA);
 	}
