@@ -5,6 +5,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 
+/**
+ * This is a static class used for generating random texture sets to be used by {@link Level}.
+ */
 public final class Environment
 {
 	public enum EnvironmentType
@@ -13,10 +16,6 @@ public final class Environment
 	}
 	
 	private static final ObjectMap<EnvironmentType, Array<Texture>> MAP = new ObjectMap<EnvironmentType, Array<Texture>>();
-	
-	private Environment()
-	{
-	}
 	
 	public static void init()
 	{
@@ -31,5 +30,9 @@ public final class Environment
 	{
 		int choice = MathUtils.random(EnvironmentType.values().length - 1);
 		return MAP.get(EnvironmentType.values()[choice]);
+	}
+	
+	private Environment()
+	{
 	}
 }

@@ -11,7 +11,11 @@ import com.tender.saucer.arena.collision.BodyData;
 import com.tender.saucer.arena.collision.ICollide;
 import com.tender.saucer.arena.entity.Entity;
 import com.tender.saucer.arena.level.Level;
+import com.tender.saucer.arena.stuff.ConvertUtils;
 
+/**
+ * This represents a square block the player can walk on.
+ */
 public class Platform extends Entity
 {
 	public Platform(Level level, float x, float y)
@@ -25,11 +29,11 @@ public class Platform extends Entity
 			
 		BodyDef bDef = new BodyDef();
 		bDef.type = BodyType.StaticBody;
-		bDef.position.set(x, y); // TODO: NEED TO CONVERT VIEW COORDS TO WORLD COORDS!
+		bDef.position.set(ConvertUtils.toMeters(x), ConvertUtils.toMeters(y));
 		body = world.createBody(bDef);
 		
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(Level.CELL_SIZE, Level.CELL_SIZE);
+		shape.setAsBox(ConvertUtils.toMeters(Level.CELL_SIZE / 2.0f), ConvertUtils.toMeters(Level.CELL_SIZE / 2.0f));
 		
 		FixtureDef fDef = new FixtureDef();
 		fDef.density = 0;

@@ -11,6 +11,9 @@ import com.tender.saucer.arena.entity.platform.Platform;
 import com.tender.saucer.arena.stuff.Backbone;
 import com.tender.saucer.arena.update.IUpdate;
 
+/**
+ * This represents the game level and physics world that players play in.
+ */
 public class Level implements IUpdate
 {
 	public static final int GRAVITY = -10;

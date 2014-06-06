@@ -2,6 +2,9 @@ package com.tender.saucer.arena.input;
 
 import com.badlogic.gdx.InputProcessor;
 
+/**
+ * This is the input processor for Gdx.input.
+ */
 public class InputListener implements InputProcessor
 {
 	@Override

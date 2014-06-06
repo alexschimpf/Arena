@@ -8,6 +8,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tender.saucer.arena.level.Level;
 
+/**
+ * This is a type of entity that is animated.
+ */
 public abstract class AnimatedEntity extends Entity
 {
 	public enum AnimationState

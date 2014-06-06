@@ -4,6 +4,9 @@ import com.tender.saucer.arena.entity.AnimatedEntity;
 import com.tender.saucer.arena.level.Level;
 import com.tender.saucer.arena.update.IUpdate;
 
+/**
+ * This represents a playable entity that the user (or AI) controls.
+ */
 public abstract class Player extends AnimatedEntity
 {	
 	public static final int BASE_HEALTH = 10;

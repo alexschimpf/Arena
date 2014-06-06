@@ -8,6 +8,9 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.tender.saucer.arena.entity.Entity;
 
+/**
+ * This is the contact listener used by the physics world in {@link Level}.
+ */
 public class CollisionListener implements ContactListener
 {
 	@Override
