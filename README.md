@@ -1,8 +1,12 @@
 Arena
 =====
 
-- TextureRegions can easily be created from Textures (through contructor).
-- Sprites are a more specific TextureRegion, with position, color, and scale fields.
-	- Use these.
-	- Drawing is a little different (e.g. sprite.draw(batch))
-- 
+1. Write logic for player movement.
+2. Write input logic.
+3. Write procedural logic for level building.
+4. How should collisions be handled?
+	- This logic might need to fully belong to CollisionHandler.
+	- Jumping over / under platform logic...
+5. Need bitmasks for collisions.
+6. Need projectile class.
+7. Need to use screens.

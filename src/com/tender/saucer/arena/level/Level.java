@@ -12,7 +12,7 @@ import com.tender.saucer.arena.stuff.Backbone;
 import com.tender.saucer.arena.update.IUpdate;
 
 /**
- * This represents the game level and physics world that players play in.
+ * This represents the game level and physics world that players exist in.
  */
 public class Level implements IUpdate
 {
@@ -33,6 +33,20 @@ public class Level implements IUpdate
 		textures = Environment.getRandom();
 		
 		build();
+	}
+	
+	@Override
+	public boolean update()
+	{
+		world.step(Gdx.graphics.getDeltaTime(), 3, 3);
+		
+		return false;
+	}
+
+	@Override
+	public void onDone()
+	{
+		
 	}
 	
 	protected void build()
@@ -79,19 +93,5 @@ public class Level implements IUpdate
 	public Platform[][] getPlatforms()
 	{
 		return platforms;
-	}
-
-	@Override
-	public boolean update()
-	{
-		world.step(Gdx.graphics.getDeltaTime(), 3, 3);
-		
-		return false;
-	}
-
-	@Override
-	public void onDone()
-	{
-		
 	}
 }

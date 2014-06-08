@@ -21,8 +21,8 @@ public abstract class AnimatedEntity extends Entity
 	}
 	
 	protected Animation animation;
-	protected float stateTime = 0;
-	protected AnimationState state = AnimationState.STOPPED;
+	protected float animationStateTime = 0;
+	protected AnimationState animationState = AnimationState.STOPPED;
 	
 	public AnimatedEntity(Level level)
 	{
@@ -55,9 +55,9 @@ public abstract class AnimatedEntity extends Entity
 	{
 		super.update();
 		
-		if(state == AnimationState.PLAYING)
+		if(animationState == AnimationState.PLAYING)
 		{
-			stateTime += Gdx.graphics.getDeltaTime();
+			animationStateTime += Gdx.graphics.getDeltaTime();
 		}
 		
 		return false;
@@ -65,29 +65,40 @@ public abstract class AnimatedEntity extends Entity
 	
 	public void pauseAnimation()
 	{
-		state = AnimationState.PAUSED;
+		animationState = AnimationState.PAUSED;
 	}
 	
-	public void startAnimation()
+	public void resumeAnimation()
 	{
-		state = AnimationState.PLAYING;
+		animationState = AnimationState.PLAYING;
 	}
 	
 	public void stopAnimation()
 	{
-		state = AnimationState.STOPPED;
-		stateTime = 0;
+		animationState = AnimationState.STOPPED;
+		animationStateTime = 0;
+	}
+	
+	public void startAnimation()
+	{
+		animationState = AnimationState.PLAYING;
+		animationStateTime = 0;
+	}
+	
+	public boolean isAnimationPlaying()
+	{
+		return animationState == AnimationState.PLAYING;
 	}
 	
 	@Override 
 	public Sprite getSprite()
 	{
-		sprite.setRegion(animation.getKeyFrame(stateTime, true));
+		sprite.setRegion(animation.getKeyFrame(animationStateTime, true));
 		return sprite;
 	}
 	
-	public AnimationState getState()
+	public AnimationState getAnimationState()
 	{
-		return state;
+		return animationState;
 	}
 }
