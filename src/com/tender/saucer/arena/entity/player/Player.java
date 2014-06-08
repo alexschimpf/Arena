@@ -1,21 +1,31 @@
 package com.tender.saucer.arena.entity.player;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
-import com.tender.saucer.arena.entity.AnimatedEntity;
+import com.tender.saucer.arena.animation.IAnimate;
+import com.tender.saucer.arena.entity.Entity;
 import com.tender.saucer.arena.level.Level;
-import com.tender.saucer.arena.update.IUpdate;
 
 /**
  * This represents a playable entity that the user (or AI) controls.
  */
-public abstract class Player extends AnimatedEntity
+public abstract class Player extends Entity implements IAnimate
 {	
 	public enum Direction
 	{
 		LEFT,
 		RIGHT
+	}
+	
+	private enum AnimationState
+	{
+		PLAYING,
+		PAUSED,
+		STOPPED
 	}
 	
 	public static final int BASE_HEALTH = 10;
@@ -28,17 +38,52 @@ public abstract class Player extends AnimatedEntity
 	protected int health = BASE_HEALTH;
 	protected int damage = BASE_DAMAGE;
 	protected int numJumpsLeft = BASE_NUM_JUMPS;
+	protected int frameIndex = 0;
 	protected float speed = BASE_SPEED;
 	protected float jumpImpulse = BASE_JUMP_IMPULSE;
 	protected float attackCooldown = BASE_ATTACK_COOLDOWN;
+	protected float animationStateTime = 0;
 	protected long lastAttackTime = 0;
 	protected Direction direction;
 	
-	public Player(Level level)
+	private AnimationState animationState = AnimationState.STOPPED;
+	private Animation animationLeft;
+	private Animation animationRight;
+	
+	protected Player(Level level, float x, float y, String sheetFilename, int numRows, int numCols, float frameDuration)
 	{
 		super(level);
 		
 		direction = MathUtils.random() < 0.5 ? Direction.LEFT : Direction.RIGHT;
+		
+		sprite = new Sprite();
+        sprite.setPosition(x, y);
+		
+		Texture sheet = new Texture(Gdx.files.internal(sheetFilename));
+        TextureRegion[][] regions = TextureRegion.split(sheet, sheet.getWidth() / numCols, sheet.getHeight() / numRows);
+        
+        int numTiles = numRows * numCols;
+        TextureRegion[] framesLeft = new Sprite[numTiles / 2];
+        TextureRegion[] framesRight = new Sprite[numTiles / 2];
+        
+        int idx = 0;
+        for(int row = 0; row < numRows; row++)
+        {
+        	for(int col = 0; col < numCols; col++)
+        	{
+        		if(idx < numTiles / 2)
+        		{
+        			framesLeft[idx++] = regions[row][col];
+        		}
+        		else
+        		{
+        			framesRight[idx++] = regions[row][col];
+        		}    		
+        	}
+        }
+        
+        animationLeft = new Animation(frameDuration, framesLeft);
+        animationRight = new Animation(frameDuration, framesRight);
 	}
 	
 	public abstract void attack();
@@ -48,6 +93,13 @@ public abstract class Player extends AnimatedEntity
 	{
 		super.update();
 		
+		updateSprite();
+		
+		if(animationState == AnimationState.PLAYING)
+		{
+			animationStateTime += Gdx.graphics.getDeltaTime();
+		}
+		
 		return health <= 0;
 	}
 	
@@ -55,6 +107,32 @@ public abstract class Player extends AnimatedEntity
 	public void onDone()
 	{
 		super.onDone();
+	}
+	
+	@Override
+	public void pauseAnimation()
+	{
+		animationState = AnimationState.PAUSED;
+	}
+	
+	@Override
+	public void resumeAnimation()
+	{
+		animationState = AnimationState.PLAYING;
+	}
+	
+	@Override
+	public void stopAnimation()
+	{
+		animationState = AnimationState.STOPPED;
+		animationStateTime = 0;
+	}
+	
+	@Override
+	public void startAnimation()
+	{
+		animationState = AnimationState.PLAYING;
+		animationStateTime = 0;
 	}
 	
 	public void moveLeft()
@@ -102,32 +180,12 @@ public abstract class Player extends AnimatedEntity
 			body.setLinearVelocity(x, y);
 		}
 	}
-	
-	protected void tryFlipSprite(Direction direction)
+
+	private void updateSprite()
 	{
-		if(direction == Direction.RIGHT && sprite.isFlipX())
-		{
-			sprite.flip(false, false);
-		}
-		
-		if(direction == Direction.LEFT && !sprite.isFlipX())
-		{
-			sprite.flip(true, false);
-		}
-	}
-	
-	@Override
-	public void draw(SpriteBatch batch)
-	{
-		tryFlipSprite(direction);	
-		super.draw(batch);
-	}
-	
-	@Override
-	public Sprite getSprite()
-	{
-		tryFlipSprite(direction);	
-		return super.getSprite();
+		Animation animation = direction == Direction.LEFT ? animationLeft : animationRight;
+		TextureRegion region = animation.getKeyFrame(animationStateTime, true);
+		sprite.setRegion(region);
 	}
 	
 	public int getHealth()

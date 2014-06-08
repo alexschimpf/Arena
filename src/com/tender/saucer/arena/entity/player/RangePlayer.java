@@ -8,9 +8,9 @@ import com.tender.saucer.arena.level.Level;
  */
 public class RangePlayer extends Player
 {
-	public RangePlayer(Level level)
+	public RangePlayer(Level level, float x, float y)
 	{
-		super(level);
+		super(level, x, y, "range_player.png", 1, 8, 200);
 	}
 
 	@Override

@@ -8,9 +8,9 @@ import com.tender.saucer.arena.level.Level;
  */
 public class MeleePlayer extends Player
 {
-	public MeleePlayer(Level level)
+	public MeleePlayer(Level level, float x, float y)
 	{
-		super(level);
+		super(level, x, y, "melee_player.png", 1, 8, 200);
 		
 		damage = BASE_DAMAGE * 3;
 	}
