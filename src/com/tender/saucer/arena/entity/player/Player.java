@@ -6,9 +6,15 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.tender.saucer.arena.animation.IAnimate;
+import com.tender.saucer.arena.collision.BodyData;
 import com.tender.saucer.arena.entity.Entity;
 import com.tender.saucer.arena.level.Level;
+import com.tender.saucer.arena.miscellaneous.ConvertUtils;
 
 /**
  * This represents a playable entity that the user (or AI) controls.
@@ -88,6 +94,23 @@ public abstract class Player extends Entity implements IAnimate
         
         animationLeft = new Animation(frameDuration, framesLeft);
         animationRight = new Animation(frameDuration, framesRight);
+        
+        BodyDef bDef = new BodyDef();
+		bDef.type = BodyType.DynamicBody;
+		bDef.position.set(ConvertUtils.toMeters(x), ConvertUtils.toMeters(y));
+		body = world.createBody(bDef);
+		
+		PolygonShape shape = new PolygonShape();
+		shape.setAsBox(ConvertUtils.toMeters(Level.CELL_SIZE / 2.0f), ConvertUtils.toMeters(Level.CELL_SIZE / 2.0f));
+		
+		FixtureDef fDef = new FixtureDef();
+		fDef.density = 1;
+		fDef.friction = 0.4f;
+		fDef.restitution = 0.4f;
+		fDef.shape = shape;
+		body.createFixture(shape, 0);
+		
+		body.setUserData(new BodyData(this));
 	}
 	
 	public abstract void attack();

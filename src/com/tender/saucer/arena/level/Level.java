@@ -57,7 +57,7 @@ public class Level implements IUpdate
 			return null;
 		}
 		
-		int row = level.getNumRows() - (int)Math.ceil(y / CELL_SIZE);
+		int row = level.getNumRows() - MathUtils.ceil(y / CELL_SIZE);
 		int col = (int)(x / CELL_SIZE);
 		return new Vector2(row, col);
 	}
@@ -151,10 +151,11 @@ public class Level implements IUpdate
 	protected void createRandTerrain()
 	{
 		int startRow = MathUtils.random(3, 5);
-		int row = startRow;
-		int col = MathUtils.random(0, numCols / 10);
 		while(startRow > 10)
 		{
+			int row = startRow;
+			int col = MathUtils.random(0, numCols / 10);
+			
 			while(true)
 			{
 				int unitWidth = MathUtils.random(1, 10);
@@ -169,8 +170,6 @@ public class Level implements IUpdate
 			}
 			
 			startRow -= MathUtils.random(12, 20);
-			row = startRow;
-			col = MathUtils.random(0, numCols / 10);
 		}
 	}
 	
