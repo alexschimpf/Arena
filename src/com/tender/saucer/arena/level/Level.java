@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -141,6 +140,7 @@ public class Level implements IUpdate
 	
 	protected void createFloor()
 	{
+		// Create a line of tiles at y = 0.
 		for(int i = 0; i < numCols; i++)
 		{
 			Platform platform = new Platform(this, i * CELL_SIZE, 0);
@@ -148,8 +148,13 @@ public class Level implements IUpdate
 		}
 	}
 	
+	/**
+	 * 1. Start near the bottom left of the map.
+	 * 2. Build random platform "units" across the map (from left to right) about some row.
+	 * 3. Move up the map and repeat 2 until we get close to the ceiling.
+	 */
 	protected void createRandTerrain()
-	{
+	{	
 		int startRow = MathUtils.random(3, 5);
 		while(startRow > 10)
 		{
@@ -182,12 +187,19 @@ public class Level implements IUpdate
 			int dRow = MathUtils.random() < 0.5f ? 0 : 1;
 			dRow += MathUtils.random() < 0.5f ? 0 : -1;
 			row = Math.min(row - dRow, startRow);
-			col++;
+			col++; 
 			
-			Vector2 pos = Level.toXY(this, row, col);
-			Platform platform = new Platform(this, pos.x, pos.y);
-			platforms[row][col] = platform;
-			entities.add(platform);
+			int numCellsDown = 1 + MathUtils.random(0, startRow - row);
+			int currRow = row;
+			for(int j = 0; j < numCellsDown; j++)
+			{
+				Vector2 pos = toXY(this, currRow, col);
+				Platform platform = new Platform(this, pos.x, pos.y);
+				platforms[currRow][col] = platform;
+				entities.add(platform);
+				
+				currRow++;
+			}
 		}
 	}
 	
