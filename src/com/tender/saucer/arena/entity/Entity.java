@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Disposable;
 import com.tender.saucer.arena.collision.ICollide;
 import com.tender.saucer.arena.level.Level;
-import com.tender.saucer.arena.stuff.ConvertUtils;
+import com.tender.saucer.arena.miscellaneous.ConvertUtils;
 import com.tender.saucer.arena.update.IUpdate;
 
 /**

@@ -9,8 +9,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tender.saucer.arena.entity.Entity;
 import com.tender.saucer.arena.input.InputListener;
 import com.tender.saucer.arena.level.Environment;
-import com.tender.saucer.arena.stuff.Backbone;
-import com.tender.saucer.arena.stuff.Textures;
+import com.tender.saucer.arena.miscellaneous.Backbone;
+import com.tender.saucer.arena.miscellaneous.Textures;
 
 public class Main extends Game
 {	
@@ -39,11 +39,10 @@ public class Main extends Game
 		
 		batch.begin();
 		{
-			Iterator<Entity> it = Backbone.ENTITIES.iterator();
+			Iterator<Entity> it = Backbone.level.getEntities().iterator();
 			while(it.hasNext())
 			{
 				Entity entity = it.next();
-				entity.update();
 				entity.draw(batch);
 			}
 		}

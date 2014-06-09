@@ -11,7 +11,7 @@ import com.tender.saucer.arena.collision.BodyData;
 import com.tender.saucer.arena.collision.ICollide;
 import com.tender.saucer.arena.entity.Entity;
 import com.tender.saucer.arena.level.Level;
-import com.tender.saucer.arena.stuff.ConvertUtils;
+import com.tender.saucer.arena.miscellaneous.ConvertUtils;
 
 /**
  * This represents a square block the player can walk on.

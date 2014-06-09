@@ -1,9 +1,9 @@
 Arena
 =====
 
-1. Write logic for player movement.
+1. Write logic for player movement. - DONE
 2. Write input logic.
-3. Write procedural logic for level building.
+3. Write procedural logic for level building. - DONE
 4. How should collisions be handled?
 	- This logic might need to fully belong to CollisionHandler.
 	- Jumping over / under platform logic...

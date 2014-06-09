@@ -62,16 +62,20 @@ public abstract class Player extends Entity implements IAnimate
 		Texture sheet = new Texture(Gdx.files.internal(sheetFilename));
         TextureRegion[][] regions = TextureRegion.split(sheet, sheet.getWidth() / numCols, sheet.getHeight() / numRows);
         
-        int numTiles = numRows * numCols;
-        TextureRegion[] framesLeft = new Sprite[numTiles / 2];
-        TextureRegion[] framesRight = new Sprite[numTiles / 2];
+        // We split the frames into left and right movement arrays.
+        // We assume the following:
+        //     - The # of frames is even.
+        //     - The left movement frames all come before the right movement frames.
+        int numFrames = numRows * numCols;
+        TextureRegion[] framesLeft = new Sprite[numFrames / 2];
+        TextureRegion[] framesRight = new Sprite[numFrames / 2];
         
         int idx = 0;
         for(int row = 0; row < numRows; row++)
         {
         	for(int col = 0; col < numCols; col++)
         	{
-        		if(idx < numTiles / 2)
+        		if(idx < numFrames / 2)
         		{
         			framesLeft[idx++] = regions[row][col];
         		}
@@ -183,6 +187,7 @@ public abstract class Player extends Entity implements IAnimate
 
 	private void updateSprite()
 	{
+		// Update the sprite's texture region to the current animation's frame.
 		Animation animation = direction == Direction.LEFT ? animationLeft : animationRight;
 		TextureRegion region = animation.getKeyFrame(animationStateTime, true);
 		sprite.setRegion(region);
