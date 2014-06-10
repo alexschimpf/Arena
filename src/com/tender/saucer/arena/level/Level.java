@@ -2,79 +2,53 @@ package com.tender.saucer.arena.level;
 
 import java.util.Iterator;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.utils.Array;
-import com.tender.saucer.arena.collision.CollisionListener;
+import com.badlogic.gdx.utils.Disposable;
 import com.tender.saucer.arena.entity.Entity;
 import com.tender.saucer.arena.entity.platform.Platform;
+import com.tender.saucer.arena.entity.player.MeleePlayer;
 import com.tender.saucer.arena.entity.player.Player;
 import com.tender.saucer.arena.miscellaneous.Backbone;
-import com.tender.saucer.arena.miscellaneous.ConvertUtils;
 import com.tender.saucer.arena.update.IUpdate;
 
 /**
  * This represents the game level and physics world that players exist in.
  */
-public class Level implements IUpdate
+public class Level implements Disposable, IUpdate
 {
 	public static final int GRAVITY = -10;
-	public static final int CELL_SIZE = 25;
+	public static final int CELL_SIZE = 50;
 	
 	protected int width;
 	protected int height;
 	protected int numCols;
 	protected int numRows;
-	protected Array<Texture> textures;
-	protected World world = new World(new Vector2(0, GRAVITY), true);
-	protected Platform[][] platforms;	
+	protected Array<Texture> environmentTextures;
 	protected Array<Entity> entities = new Array<Entity>();
 	protected Player player;
 	
-	public static Vector2 toXY(Level level, int row, int col)
-	{
-		if(row >= level.getNumRows() || row < 0 || col >= level.getNumCols() || col < 0)
-		{
-			return null;
-		}
-		
-		return new Vector2(col * CELL_SIZE, (level.getNumRows() - row) * CELL_SIZE);
-	}
-	
-	public static Vector2 toRowCol(Level level, float x, float y)
-	{
-		if(x >= level.getWidth() || x < 0 || y >= level.getHeight() || y < 0)
-		{
-			return null;
-		}
-		
-		int row = level.getNumRows() - MathUtils.ceil(y / CELL_SIZE);
-		int col = (int)(x / CELL_SIZE);
-		return new Vector2(row, col);
-	}
-	
 	public Level()
 	{
-		world.setContactListener(new CollisionListener());
-		textures = Environment.getRandom();
+		environmentTextures = Environment.getRandTextures();
 		
 		build();
 	}
 	
 	@Override
+	public void dispose()
+	{
+		
+	}
+	
+	@Override
 	public boolean update()
 	{
-		world.step(Gdx.graphics.getDeltaTime(), 3, 3);
-		
 		updateEntities();
+		
+		player.update();
 		
 		return false;
 	}
@@ -82,21 +56,29 @@ public class Level implements IUpdate
 	@Override
 	public void onDone()
 	{
+		dispose();
+	}
+	
+	public void draw(SpriteBatch batch)
+	{
+		for(Entity entity : entities)
+		{
+			entity.draw(batch);
+		}
 		
+		player.draw(batch);
 	}
 	
 	protected void build()
 	{
-		int min = (Backbone.WIDTH * 3) / CELL_SIZE;
-		int max = (Backbone.WIDTH * 6) / CELL_SIZE;
-		numCols = MathUtils.random(min, max);
-		numRows = MathUtils.random(min, max);
+		numRows = numCols = (Backbone.WIDTH * 4) / CELL_SIZE; 
 		width = numCols * CELL_SIZE;
 		height = numRows * CELL_SIZE;
-		platforms = new Platform[numCols][numRows]; 
 		
-		createBounds();		
+		createFloor();		
 		createRandTerrain();
+		
+		player = new MeleePlayer(this, 0, CELL_SIZE);
 	}
 	
 	protected void updateEntities()
@@ -112,32 +94,7 @@ public class Level implements IUpdate
 			}
 		}
 	}
-	
-	protected void createBounds()
-	{
-		createSideBound(-1, height);
-		createSideBound(width, height);	
-		createFloor();
-	}
-	
-	protected void createSideBound(float x, float y)
-	{			
-		BodyDef bDef = new BodyDef();
-		bDef.type = BodyType.StaticBody;
-		bDef.position.set(ConvertUtils.toMeters(x), ConvertUtils.toMeters(y));
-		Body body = world.createBody(bDef);
-		
-		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(1, height);
-		
-		FixtureDef fDef = new FixtureDef();
-		fDef.density = 0;
-		fDef.friction = 0;
-		fDef.restitution = 0.4f;
-		fDef.shape = shape;
-		body.createFixture(shape, 0);
-	}
-	
+
 	protected void createFloor()
 	{
 		// Create a line of tiles at y = 0.
@@ -148,59 +105,88 @@ public class Level implements IUpdate
 		}
 	}
 	
-	/**
-	 * 1. Start near the bottom left of the map.
-	 * 2. Build random platform "units" across the map (from left to right) about some row.
-	 * 3. Move up the map and repeat 2 until we get close to the ceiling.
-	 */
 	protected void createRandTerrain()
 	{	
-		int startRow = MathUtils.random(3, 5);
-		while(startRow > 10)
+		
+		int startRow = numRows - MathUtils.random(1, 3);
+		int row = startRow;
+		int col = MathUtils.random(0, numCols / 10);
+		while(true)
 		{
-			int row = startRow;
-			int col = MathUtils.random(0, numCols / 10);
-			
-			while(true)
+			int numLevels = MathUtils.random(1, 4);
+			int unitWidth = MathUtils.random(1, 8);
+			if(col + unitWidth >= numCols)
 			{
-				int unitWidth = MathUtils.random(1, 10);
-				if(col + unitWidth >= numCols)
-				{
-					break;
-				}							
-				createRandPlatformUnit(row, col, unitWidth);
-				
-				col += MathUtils.random(5, numCols / 10);
-				row = startRow - MathUtils.random(0, 7);
-			}
+				break;
+			}							
+			createRandPlatformUnits(row, col, unitWidth, numLevels);
 			
-			startRow -= MathUtils.random(12, 20);
+			col += unitWidth + MathUtils.random(3, numCols / 10);
+			row = startRow - MathUtils.random(0, 2);
 		}
-	}
+}
 	
-	protected void createRandPlatformUnit(int startRow, int startCol, int unitWidth)
+	protected void createRandPlatformUnits(int startRow, int startCol, int unitWidth, int numLevels)
 	{	
 		int row = startRow;
 		int col = startCol;
-		for(int i = 0; i < unitWidth; i++)
+		int unitHeight = 0;
+		for(int level = 0; level < numLevels; level++)
 		{
-			int dRow = MathUtils.random() < 0.5f ? 0 : 1;
-			dRow += MathUtils.random() < 0.5f ? 0 : -1;
-			row = Math.min(row - dRow, startRow);
-			col++; 
-			
-			int numCellsDown = 1 + MathUtils.random(0, startRow - row);
-			int currRow = row;
-			for(int j = 0; j < numCellsDown; j++)
+			for(int i = 0; i < unitWidth; i++)
 			{
-				Vector2 pos = toXY(this, currRow, col);
-				Platform platform = new Platform(this, pos.x, pos.y);
-				platforms[currRow][col] = platform;
-				entities.add(platform);
+				int dRow = MathUtils.random() < 0.5f ? 0 : 1;
+				dRow += MathUtils.random() < 0.5f ? 0 : -1;
+				row = Math.min(row - dRow, startRow);
+				col++; 
 				
-				currRow++;
+				if(col >= numCols)
+				{
+					break;
+				}
+				
+				if(startRow - row > unitHeight)
+				{
+					unitHeight = startRow - row;
+				}
+				
+				int numCellsDown = 1 + MathUtils.random(0, startRow - row);
+				int currRow = row;
+				for(int j = 0; j < numCellsDown; j++)
+				{
+					float x = (int)(col * CELL_SIZE);
+					float y = height - (int)(currRow * CELL_SIZE);
+					
+					if(!platformExistsAt(x, y))
+					{
+						Platform platform = new Platform(this, x, y);
+						entities.add(platform);
+					}
+					
+					currRow++;
+				}
+			}
+			
+			col = Math.max(0, startCol + MathUtils.random(-unitWidth, unitWidth));
+			row = startRow - MathUtils.random(unitHeight, unitHeight + 2);
+			startRow = row;
+		}
+	}
+	
+	protected boolean platformExistsAt(float x, float y)
+	{
+		for(Entity entity : entities)
+		{
+			if(entity instanceof Platform)
+			{
+				if(entity.getSprite().getX() == x && entity.getSprite().getY() == y)
+				{
+					return true;
+				}
 			}
 		}
+		
+		return false;
 	}
 	
 	public int getWidth()
@@ -223,23 +209,18 @@ public class Level implements IUpdate
 		return numRows;
 	}
 
-	public Array<Texture> getTextures()
+	public Array<Texture> getEnvironmentTextures()
 	{
-		return textures;
+		return environmentTextures;
 	}
 
-	public World getWorld()
-	{
-		return world;
-	}
-
-	public Platform[][] getPlatforms()
-	{
-		return platforms;
-	}
-	
 	public Array<Entity> getEntities()
 	{
 		return entities;
+	}
+	
+	public Player getPlayer()
+	{
+		return player;
 	}
 }

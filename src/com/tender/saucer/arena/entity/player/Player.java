@@ -6,15 +6,9 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.tender.saucer.arena.animation.IAnimate;
-import com.tender.saucer.arena.collision.BodyData;
 import com.tender.saucer.arena.entity.Entity;
 import com.tender.saucer.arena.level.Level;
-import com.tender.saucer.arena.miscellaneous.ConvertUtils;
 
 /**
  * This represents a playable entity that the user (or AI) controls.
@@ -36,7 +30,7 @@ public abstract class Player extends Entity implements IAnimate
 	
 	public static final int BASE_HEALTH = 10;
 	public static final int BASE_DAMAGE = 1;
-	public static final int BASE_NUM_JUMPS = 2;
+	public static final int BASE_NUM_JUMPS = 100;
 	public static final float BASE_SPEED = 10;
 	public static final float BASE_JUMP_IMPULSE = 15;
 	public static final float BASE_ATTACK_COOLDOWN = 300;
@@ -64,6 +58,7 @@ public abstract class Player extends Entity implements IAnimate
 		
 		sprite = new Sprite();
         sprite.setPosition(x, y);
+        sprite.setSize(Level.CELL_SIZE * 0.95f, Level.CELL_SIZE * 0.95f);
 		
 		Texture sheet = new Texture(Gdx.files.internal(sheetFilename));
         TextureRegion[][] regions = TextureRegion.split(sheet, sheet.getWidth() / numCols, sheet.getHeight() / numRows);
@@ -73,44 +68,23 @@ public abstract class Player extends Entity implements IAnimate
         //     - The # of frames is even.
         //     - The left movement frames all come before the right movement frames.
         int numFrames = numRows * numCols;
-        TextureRegion[] framesLeft = new Sprite[numFrames / 2];
-        TextureRegion[] framesRight = new Sprite[numFrames / 2];
+        TextureRegion[] framesLeft = new TextureRegion[numFrames / 2];
+        TextureRegion[] framesRight = new TextureRegion[numFrames / 2];
         
-        int idx = 0;
-        for(int row = 0; row < numRows; row++)
-        {
-        	for(int col = 0; col < numCols; col++)
-        	{
-        		if(idx < numFrames / 2)
-        		{
-        			framesLeft[idx++] = regions[row][col];
-        		}
-        		else
-        		{
-        			framesRight[idx++] = regions[row][col];
-        		}    		
-        	}
-        }
+    	for(int col = 0; col < numCols; col++)
+    	{
+    		if(col < numFrames / 2)
+    		{
+    			framesLeft[col] = regions[0][col];
+    		}
+    		else
+    		{
+    			framesRight[col % (numCols / 2)] = regions[0][col]; 
+    		}    
+    	}
         
         animationLeft = new Animation(frameDuration, framesLeft);
         animationRight = new Animation(frameDuration, framesRight);
-        
-        BodyDef bDef = new BodyDef();
-		bDef.type = BodyType.DynamicBody;
-		bDef.position.set(ConvertUtils.toMeters(x), ConvertUtils.toMeters(y));
-		body = world.createBody(bDef);
-		
-		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(ConvertUtils.toMeters(Level.CELL_SIZE / 2.0f), ConvertUtils.toMeters(Level.CELL_SIZE / 2.0f));
-		
-		FixtureDef fDef = new FixtureDef();
-		fDef.density = 1;
-		fDef.friction = 0.4f;
-		fDef.restitution = 0.4f;
-		fDef.shape = shape;
-		body.createFixture(shape, 0);
-		
-		body.setUserData(new BodyData(this));
 	}
 	
 	public abstract void attack();
@@ -166,22 +140,17 @@ public abstract class Player extends Entity implements IAnimate
 	{
 		direction = Direction.LEFT;
 		resumeAnimation();
-		
-		body.setLinearVelocity(-speed, 0);
 	}
 	
 	public void moveRight()
 	{
 		direction = Direction.RIGHT;
 		resumeAnimation();
-		
-		body.setLinearVelocity(speed, 0);
 	}
 	
 	public void stopMove()
 	{
 		stopAnimation();	
-		body.setLinearVelocity(0, body.getLinearVelocity().y);
 	}
 	
 	public void jump()
@@ -191,10 +160,6 @@ public abstract class Player extends Entity implements IAnimate
 			stopAnimation();
 			
 			numJumpsLeft--;
-			
-			float x = body.getWorldCenter().x;
-			float y = body.getWorldCenter().y;
-			body.applyLinearImpulse(0, jumpImpulse, x, y, true);
 		}
 	}
 	
@@ -202,9 +167,6 @@ public abstract class Player extends Entity implements IAnimate
 	{
 		if(numJumpsLeft > 0)
 		{
-			float x = body.getLinearVelocity().x;
-			float y = body.getLinearVelocity().y / 5;
-			body.setLinearVelocity(x, y);
 		}
 	}
 

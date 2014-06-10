@@ -1,11 +1,12 @@
 package com.tender.saucer.arena.input;
 
 import com.badlogic.gdx.InputProcessor;
+import com.tender.saucer.arena.miscellaneous.Backbone;
 
 /**
  * This is the input processor for Gdx.input.
  */
-public class InputListener implements InputProcessor
+public final class InputListener implements InputProcessor
 {
 	@Override
 	public boolean keyDown(int keycode)
@@ -27,8 +28,8 @@ public class InputListener implements InputProcessor
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button)
-	{
-		return false;
+	{	
+		return true;
 	}
 
 	@Override
