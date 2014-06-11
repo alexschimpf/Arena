@@ -9,7 +9,7 @@ public class RangePlayer extends Player
 {
 	public RangePlayer(Level level, float x, float y)
 	{
-		super(level, x, y, "player_range.png", 1, 8, 200);
+		super(level, x, y, "player_range.png", 1, 8, 0.1f);
 	}
 
 	@Override

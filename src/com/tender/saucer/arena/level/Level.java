@@ -106,8 +106,7 @@ public class Level implements Disposable, IUpdate
 	}
 	
 	protected void createRandTerrain()
-	{	
-		
+	{		
 		int startRow = numRows - MathUtils.random(1, 3);
 		int row = startRow;
 		int col = MathUtils.random(0, numCols / 10);
