@@ -188,6 +188,25 @@ public class Level implements Disposable, IUpdate
 		return false;
 	}
 	
+	public Platform getPlatformAt(float x, float y)
+	{
+		x = (int)(x / CELL_SIZE) * CELL_SIZE;
+		y = (int)Math.round(y / CELL_SIZE) * CELL_SIZE;
+		
+		for(Entity entity : entities)
+		{
+			if(entity instanceof Platform)
+			{
+				if(entity.getSprite().getX() == x && entity.getSprite().getY() == y)
+				{
+					return (Platform)entity;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 	public int getWidth()
 	{
 		return width;

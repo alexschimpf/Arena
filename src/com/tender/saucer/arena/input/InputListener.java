@@ -1,5 +1,6 @@
 package com.tender.saucer.arena.input;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.tender.saucer.arena.miscellaneous.Backbone;
 
@@ -29,14 +30,20 @@ public final class InputListener implements InputProcessor
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button)
 	{	
-		Backbone.level.getPlayer().moveRight();
-		return true;
+		if(screenY < Gdx.graphics.getHeight() / 2)
+		{
+			Backbone.level.getPlayer().jump();
+		}
+		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button)
 	{
-		Backbone.level.getPlayer().stopMove();
+		if(screenY < Gdx.graphics.getHeight() / 2)
+		{
+			Backbone.level.getPlayer().stopJump();
+		}
 		return false;
 	}
 

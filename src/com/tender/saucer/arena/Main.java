@@ -46,6 +46,26 @@ public final class Main extends ApplicationAdapter
 				
 			}
 			batch.end();
+			
+			if(Gdx.input.isTouched())
+			{
+				if(Gdx.input.getY() < Gdx.graphics.getHeight() / 2)
+				{
+					
+				}			
+				else if(Gdx.input.getX() < Gdx.graphics.getWidth() / 2)
+				{
+					Backbone.level.getPlayer().moveLeft();
+				}
+				else
+				{
+					Backbone.level.getPlayer().moveRight();
+				}
+			}
+			else
+			{
+				Backbone.level.getPlayer().stopMove();
+			}
 //		}
 //		catch(Exception e)
 //		{
